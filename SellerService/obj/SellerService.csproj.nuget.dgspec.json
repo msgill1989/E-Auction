@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\SellerService\\SellerService.csproj": {}
+    "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\SellerService\\SellerService.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\SellerService\\SellerService.csproj": {
+    "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\SellerService\\SellerService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\SellerService\\SellerService.csproj",
+        "projectUniqueName": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\SellerService\\SellerService.csproj",
         "projectName": "SellerService",
-        "projectPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\SellerService\\SellerService.csproj",
+        "projectPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\SellerService\\SellerService.csproj",
         "packagesPath": "C:\\Users\\cogdotnet474\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\SellerService\\obj\\",
+        "outputPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\SellerService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

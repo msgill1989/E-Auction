@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\BuyerService\\BuyerService.csproj": {}
+    "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\BuyerService\\BuyerService.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\BuyerService\\BuyerService.csproj": {
+    "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\BuyerService\\BuyerService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\BuyerService\\BuyerService.csproj",
+        "projectUniqueName": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\BuyerService\\BuyerService.csproj",
         "projectName": "BuyerService",
-        "projectPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\BuyerService\\BuyerService.csproj",
+        "projectPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\BuyerService\\BuyerService.csproj",
         "packagesPath": "C:\\Users\\cogdotnet474\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\BuyerService\\obj\\",
+        "outputPath": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\BuyerService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

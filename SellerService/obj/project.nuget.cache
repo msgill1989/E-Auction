@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "DF4qDcrXW4Y/Mj2kEc447LfPxHqyFWwnZwB5qBlnbyro/sB016wzvhPX9NRQfeY9169BTSqiklV2AvZ6PCQWhg==",
+  "dgSpecHash": "pfoBvITdgrYwBAUNZm5UzwvDfXfgcq8eEiQXUCb+1yVkuRbxmqXv8+9bdQ3ZUu8pnwenHPSMjvsKnOz8Bl9Fng==",
   "success": true,
-  "projectFilePath": "C:\\Users\\cogdotnet474\\source\\repos\\E-auction\\SellerService\\SellerService.csproj",
+  "projectFilePath": "C:\\Users\\cogdotnet474\\source\\repos\\E-Auction2\\SellerService\\SellerService.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cogdotnet474\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\cogdotnet474\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
