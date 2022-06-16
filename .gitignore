@@ -17,6 +17,10 @@
 mono_crash.*
 
 # Build results
+BuyerService/[Bb]in
+SellerService/[Bb]in
+BuyerService/[Oo]bj
+SellerService/[Oo]bj
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
