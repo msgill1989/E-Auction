@@ -11,6 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
+using SellerService.BusinessLayer.Interfaces;
+using SellerService.BusinessLayer;
+using SellerService.RepositoryLayer.Interfaces;
+using SellerService.RepositoryLayer;
+using Serilog;
 
 namespace SellerService
 {
@@ -26,6 +31,8 @@ namespace SellerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ISellerBusinessLogic, SellerBusinessLogic>();
+            services.AddTransient<ISellerRepository, SellerRepository>();
             services.AddMvc();
             services.AddMvcCore();
             services.AddSwaggerGen(c => 
@@ -57,6 +64,8 @@ namespace SellerService
             });
 
             app.UseHttpsRedirection();
+
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SellerService", "SellerService\SellerService.csproj", "{E6549F0E-A86C-41DE-B34B-240AD9B1DB3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SellerService", "SellerService\SellerService.csproj", "{E6549F0E-A86C-41DE-B34B-240AD9B1DB3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuyerService", "BuyerService\BuyerService.csproj", "{608A5AAF-E6D0-476F-86D2-AAA1753C4FEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuyerService", "BuyerService\BuyerService.csproj", "{608A5AAF-E6D0-476F-86D2-AAA1753C4FEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
