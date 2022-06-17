@@ -11,6 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
+using BuyerService.BusinessLayer.Interfaces;
+using BuyerService.BusinessLayer;
+using BuyerService.RepositoryLayer.Interfaces;
+using BuyerService.RepositoryLayer;
+using BuyerService.Models;
+using Serilog;
 
 namespace BuyerService
 {
@@ -26,6 +32,12 @@ namespace BuyerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IBuyerBusinessLogic, BuyerBusinessLogic>();
+            services.AddTransient<IBuyerRepository, BuyerRepository>();
+
+            //MongoDB settings
+            services.Configure<EAuctionDatabaseSettings>(Configuration.GetSection("EAuctionDatabase"));
+
             services.AddMvc();
             services.AddMvcCore();
             services.AddControllers();
@@ -58,6 +70,8 @@ namespace BuyerService
             });
 
             app.UseHttpsRedirection();
+
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

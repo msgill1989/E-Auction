@@ -13,5 +13,7 @@ namespace SellerService.Enums
             Sculptor,
             Ornament
         }
+
+        public const string AddProductSuccessMsg = "Product has been added successfully.";
     }
 }

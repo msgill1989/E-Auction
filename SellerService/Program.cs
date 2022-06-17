@@ -25,13 +25,13 @@ namespace SellerService
                 .CreateLogger();
             try
             {
-                Log.Information("ApplicationStarting.");
+                Log.Information("Seller Service is Starting.");
 
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Application has failed to start");
+                Log.Fatal(ex, "Seller service has failed to start");
             }
             finally
             {

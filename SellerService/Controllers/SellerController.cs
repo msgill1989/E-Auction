@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SellerService.Models;
+using SellerService.Enums;
 
 namespace SellerService.Controllers
 {
@@ -24,20 +26,19 @@ namespace SellerService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddProduct([FromBody] ProductAndSeller productToAdd)
+        public async Task<ActionResult<AddProductSuccessResponse>> AddProduct([FromBody] ProductAndSeller productToAdd)
         {
             try
             {
-                _logger.LogError("This is error.");
-                return RedirectToAction(nameof(Index));
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return View();
+                await _sellerBusinessLogic.AddProductBLayerAsync(productToAdd);
+                return new AddProductSuccessResponse { ProductId = productToAdd.Id, Message = GlobalVariables.AddProductSuccessMsg };
+
             }
             catch (Exception ex)
             {
-                return View();
+                _logger.LogError(ex, "Some internal error happened.");
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while adding the product.");
+                return StatusCode(500, details);
             }
         }
 
@@ -45,16 +46,17 @@ namespace SellerService.Controllers
         [HttpDelete("DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteProduct(string productId)
+        public async Task<IActionResult> DeleteProduct([FromQuery]string productId)
         {
             try
             {
                 return View();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _logger.LogError(ex, "Some internal error happened.");
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while Deleting the product.");
+                return StatusCode(500, details); ;
             }
         }
     }
