@@ -7,7 +7,8 @@ namespace SellerService.RepositoryLayer.Interfaces
 {
     interface ISellerRepository
     {
-        void AddProduct(ProductAndSeller productObj);
-        void DeleteProduct(string productId);
+        Task AddProductAsync(ProductAndSeller productObj);
+        Task DeleteProductAsync(string productId);
+        Task GetProductAsync(string productId);
     }
 }

@@ -5,11 +5,18 @@ using System.Threading.Tasks;
 using SellerService.Enums;
 using System.ComponentModel.DataAnnotations;
 using SellerService.CustomValidators;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace SellerService
 {
     public class ProductAndSeller
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+
+        [BsonElement("Name")]
         [Required(ErrorMessage = "Product name is required.")]
         [RegularExpression("[a-zA-Z]{3,30}", ErrorMessage = "Product name should be string and minimum of length 3, maximum of length 30.")]
         public string ProductName { get; set; }

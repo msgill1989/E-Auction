@@ -26,6 +26,7 @@ namespace SellerService
             try
             {
                 Log.Information("ApplicationStarting.");
+
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)

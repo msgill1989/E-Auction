@@ -7,8 +7,8 @@ namespace SellerService.BusinessLayer.Interfaces
 {
     public interface ISellerBusinessLogic
     {
-        void AddProduct(ProductAndSeller ProductObj);
+        Task AddProductBLayerAsync(ProductAndSeller ProductObj);
 
-        void DeleteProduct(string productId);
+        Task DeleteProductBLayerAsync(string productId);
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SellerService.Controllers
 {
+    [ApiController]
     public class SellerController : Controller
     {
         private readonly ISellerBusinessLogic _sellerBusinessLogic;
@@ -22,14 +23,19 @@ namespace SellerService.Controllers
         [HttpPost("AddProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult AddProduct([FromBody] ProductAndSeller productToAdd)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddProduct([FromBody] ProductAndSeller productToAdd)
         {
             try
             {
                 _logger.LogError("This is error.");
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (KeyNotFoundException ex)
+            {
+                return View();
+            }
+            catch (Exception ex)
             {
                 return View();
             }
@@ -39,7 +45,7 @@ namespace SellerService.Controllers
         [HttpDelete("DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult DeleteProduct(string productId)
+        public async Task<IActionResult> DeleteProduct(string productId)
         {
             try
             {

@@ -8,12 +8,12 @@ namespace SellerService.BusinessLayer
 {
     public class SellerBusinessLogic : ISellerBusinessLogic
     {
-        public void AddProduct(ProductAndSeller ProductObj)
+        public async Task AddProductBLayerAsync(ProductAndSeller ProductObj)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteProduct(string productId)
+        public async Task DeleteProductBLayerAsync(string productId)
         {
             throw new NotImplementedException();
         }

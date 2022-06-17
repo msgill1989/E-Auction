@@ -16,6 +16,7 @@ using SellerService.BusinessLayer;
 using SellerService.RepositoryLayer.Interfaces;
 using SellerService.RepositoryLayer;
 using Serilog;
+using SellerService.Models;
 
 namespace SellerService
 {
@@ -33,6 +34,10 @@ namespace SellerService
         {
             services.AddTransient<ISellerBusinessLogic, SellerBusinessLogic>();
             services.AddTransient<ISellerRepository, SellerRepository>();
+
+            //Adding MongoDB settings
+            services.Configure<EAuctionDatabaseSettings>(Configuration.GetSection("EAuctionDatabase"));
+
             services.AddMvc();
             services.AddMvcCore();
             services.AddSwaggerGen(c => 
