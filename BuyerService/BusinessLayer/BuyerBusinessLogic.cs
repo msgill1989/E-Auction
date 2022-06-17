@@ -8,5 +8,6 @@ namespace BuyerService.BusinessLayer
 {
     public class BuyerBusinessLogic : IBuyerBusinessLogic
     {
+
     }
 }
