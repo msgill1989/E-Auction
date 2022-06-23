@@ -20,10 +20,10 @@ namespace SellerService.RepositoryLayer
             _logger = logger;
             _dbSettings = DBSettings;
 
-            var mongoClient = new MongoClient(DBSettings.Value.ConnectionString);
-            var mongoDatabase = mongoClient.GetDatabase(DBSettings.Value.DatabaseName);
+            var mongoClient = new MongoClient(_dbSettings.Value.ConnectionString);
+            var mongoDatabase = mongoClient.GetDatabase(_dbSettings.Value.DatabaseName);
             _productCollection = mongoDatabase.GetCollection<ProductAndSeller>
-                (DBSettings.Value.SellerCollectionName);
+                (_dbSettings.Value.SellerCollectionName);
 
         }
         public async Task AddProductAsync(ProductAndSeller productObj)

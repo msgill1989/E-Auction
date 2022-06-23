@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BuyerService.BusinessLayer.Interfaces;
+using BuyerService.Enums;
+using BuyerService.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,78 +14,55 @@ namespace BuyerService.Controllers
     [ApiController]
     public class BuyerController : Controller
     {
-        // GET: BuyerController
-        public ActionResult Index()
+        private readonly IBuyerBusinessLogic _buyerBusinessLogic;
+        private readonly ILogger<BuyerController> _logger;
+        public BuyerController(IBuyerBusinessLogic buyerBusinessLogic, ILogger<BuyerController> logger)
         {
-            return View();
+            _buyerBusinessLogic = buyerBusinessLogic;
+            _logger = logger;
         }
-
-        // GET: BuyerController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: BuyerController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // POST: BuyerController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("AddBid")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<AddBidResponse>> AddBid([FromBody] BidAndBuyer bidDetails)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _buyerBusinessLogic.AddBid(bidDetails);
+                return new AddBidResponse { BidId = bidDetails.Id, Message = GlobalVariables.AddBidSuccessMsg };
             }
-            catch
+            catch (KeyNotFoundException ex)
             {
-                return View();
+                _logger.LogError(ex.Message);
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 400, "Bad request", null, ex.Message);
+                return StatusCode(400, details);
             }
-        }
-
-        // GET: BuyerController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: BuyerController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
+            catch (Exception ex)
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
+                _logger.LogError(ex, "Some internal error happened.");
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while adding the Bid.");
+                return StatusCode(500, details);
             }
         }
 
-        // GET: BuyerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: BuyerController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpPatch("UpdateBidAmount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UpdateBidAmountSuccessResponse>> EditBid(string bidId, double updatedBidAmount)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _buyerBusinessLogic.UpdateBid(bidId, updatedBidAmount);
+                return new UpdateBidAmountSuccessResponse { Message = "Amount has been successfully updated"};
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                _logger.LogError(ex, "Some internal error happened.");
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while updating the bid amount of the product.");
+                return StatusCode(500, details);
             }
         }
     }

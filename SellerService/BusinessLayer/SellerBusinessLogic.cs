@@ -26,7 +26,26 @@ namespace SellerService.BusinessLayer
 
         public async Task DeleteProductBLayerAsync(string productId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //Get the added product from DB
+                ProductAndSeller productDetails = await _sellerRepository.GetProductAsync(productId);
+
+                if (productDetails.BitEndDate < DateTime.Now)
+                    throw new KeyNotFoundException("Product cannot be deleted after the BidEnd date.");
+
+                //If Any bid is placed Dont delete the product
+
+
+                //Delete the product
+                await _sellerRepository.DeleteProductAsync(productId);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 }

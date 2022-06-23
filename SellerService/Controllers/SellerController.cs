@@ -46,17 +46,25 @@ namespace SellerService.Controllers
         [HttpDelete("DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteProduct([FromQuery]string productId)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<DeleteProductSuccessResponse>> DeleteProduct([FromQuery]string productId)
         {
             try
             {
-                return View();
+                await _sellerBusinessLogic.DeleteProductBLayerAsync(productId);
+                return new DeleteProductSuccessResponse { Message = "Successfully Deleted" };
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 400, "Bad request", null, ex.Message);
+                return StatusCode(400, details);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Some internal error happened.");
                 var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while Deleting the product.");
-                return StatusCode(500, details); ;
+                return StatusCode(500, details);
             }
         }
     }
