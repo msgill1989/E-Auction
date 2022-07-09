@@ -52,11 +52,19 @@ namespace BuyerService.RepositoryLayer
                 throw;
             }
         }
-        public async Task<BidAndBuyer> GetBidDetails(string productId, string bidderEmailId)
+        public async Task<BidAndBuyer> GetBidDetails(string productId, string bidderEmailId = null)
         {
             try
             {
-                var bidDetails = _bidCollections.Find(x => x.Email == bidderEmailId && x.ProductId == productId).FirstOrDefault();
+                BidAndBuyer bidDetails;
+                if (bidderEmailId == null)
+                {
+                    bidDetails = _bidCollections.Find(x => x.ProductId == productId).FirstOrDefault();
+                }
+                else
+                {
+                    bidDetails = _bidCollections.Find(x => x.Email == bidderEmailId && x.ProductId == productId).FirstOrDefault();
+                }
                 return bidDetails;
             }
             catch (Exception)

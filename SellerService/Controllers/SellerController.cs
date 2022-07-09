@@ -42,7 +42,7 @@ namespace SellerService.Controllers
             }
         }
 
-        // GET: SellerController/Delete/5
+        // DELETE product
         [HttpDelete("DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -64,6 +64,25 @@ namespace SellerService.Controllers
             {
                 _logger.LogError(ex, "Some internal error happened.");
                 var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while Deleting the product.");
+                return StatusCode(500, details);
+            }
+        }
+
+        [HttpGet("ShowBids")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ShowBidsResponse>> ShowBids([FromQuery] string productId)
+        {
+            try
+            {
+                var result = _sellerBusinessLogic.GetAllBidDetailsAsync(productId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Some internal error happened.");
+                var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while getting bid details.");
                 return StatusCode(500, details);
             }
         }

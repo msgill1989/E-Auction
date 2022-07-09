@@ -17,6 +17,7 @@ using BuyerService.RepositoryLayer.Interfaces;
 using BuyerService.RepositoryLayer;
 using BuyerService.Models;
 using Serilog;
+using Confluent.Kafka;
 
 namespace BuyerService
 {
@@ -32,6 +33,14 @@ namespace BuyerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var consumerConfig = new ConsumerConfig();
+            Configuration.Bind("consumer", consumerConfig);
+            services.AddSingleton<ConsumerConfig>(consumerConfig);
+
+            var producerConfig = new ProducerConfig();
+            Configuration.Bind("producer", producerConfig);
+            services.AddSingleton<ProducerConfig>(producerConfig);
+
             services.AddTransient<IBuyerBusinessLogic, BuyerBusinessLogic>();
             services.AddTransient<IBuyerRepository, BuyerRepository>();
 

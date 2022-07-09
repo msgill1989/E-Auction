@@ -31,7 +31,7 @@ namespace SellerService
         public double ProductStartingPrice { get; set; }
 
         [BidDateValidator(ErrorMessage = "Bid end date should be a future date.")]
-        public DateTime BitEndDate { get; set; }
+        public DateTime BidEndDate { get; set; }
 
         [Required(ErrorMessage = "Seller first name is required.")]
         [RegularExpression("[a-zA-Z]{5,30}", ErrorMessage = "Seller First name should be string and minimum of length 5, maximum of length 30.")]

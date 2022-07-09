@@ -21,7 +21,7 @@ namespace BuyerService.Controllers
             _buyerBusinessLogic = buyerBusinessLogic;
             _logger = logger;
         }
-        // POST: BuyerController/Create
+        // POST: BuyerController/AddBid
         [HttpPost("AddBid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
