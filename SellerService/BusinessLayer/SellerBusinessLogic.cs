@@ -18,7 +18,8 @@ namespace SellerService.BusinessLayer
         private readonly ILogger<SellerBusinessLogic> _logger;
         private readonly ProducerConfig _producerconfig;
         private readonly ConsumerConfig _consumerConfig;
-        private readonly Dictionary<int, bool> bidResponseFromBuyer;
+        private readonly static Dictionary<int, bool> bidResponseFromBuyer = new Dictionary<int, bool>();
+        private readonly static Dictionary<string, List<BidDetails>> bidDetailsResponseFromBuyer = new Dictionary<string, List<BidDetails>>();
 
         public SellerBusinessLogic(ISellerRepository sellerRepository, ILogger<SellerBusinessLogic> logger, ProducerConfig producerConfig, ConsumerConfig consumerConfig)
         {
@@ -52,6 +53,7 @@ namespace SellerService.BusinessLayer
                     {
                         if (bidResponseFromBuyer.FirstOrDefault(x => x.Key == Convert.ToInt16(productId)).Value == false)
                         {
+                            bidResponseFromBuyer.Remove(Convert.ToInt16(productId));
                             throw new KeyNotFoundException("Product can not be deleted because there is already a bid placed for this product.");
                         }
                         else
@@ -74,11 +76,30 @@ namespace SellerService.BusinessLayer
         {
             try
             {
+                ShowBidsResponse getAllBidsResponse = new ShowBidsResponse();
                 var productDetails = await _sellerRepository.GetProductAsync(productId);
 
-                //Get the Bid Details
+                getAllBidsResponse.ProductName = productDetails.ProductName;
+                getAllBidsResponse.ShortDescription = productDetails.ProductShortDescription;
+                getAllBidsResponse.DetailedDescription = productDetails.ProductDetailedDescription;
+                getAllBidsResponse.StartingPrice = productDetails.ProductStartingPrice;
+                getAllBidsResponse.Category = productDetails.ProductCategory;
+                getAllBidsResponse.BidEndDate = productDetails.BidEndDate;
 
-                return new ShowBidsResponse();
+                //Get the Bid Details
+                await TopicMessagePublisher("SellerProducer","GetAllBids",productId);
+
+                while (true)
+                {
+                    if (bidDetailsResponseFromBuyer.ContainsKey(productId))
+                    {
+                        getAllBidsResponse.Bids.AddRange(bidDetailsResponseFromBuyer[productId].OrderByDescending(key => key.BidAmount));
+                        bidDetailsResponseFromBuyer.Remove(productId);
+                        break;
+                    }
+                }
+
+                return getAllBidsResponse;
             }
             catch (Exception ex)
             {
@@ -126,6 +147,11 @@ namespace SellerService.BusinessLayer
                                     await IsBidDateValid(request);
                                     msg = null;
                                     break;
+                                case "bidList":
+                                    var bids = JsonConvert.DeserializeObject<GetAllBidDetailsResponse>(msg.Message.Value);
+                                    bidDetailsResponseFromBuyer.Add(bids.ProductId, bids.Bids);
+                                    msg = null;
+                                    break;
                             }
                         }
                     }
@@ -158,8 +184,16 @@ namespace SellerService.BusinessLayer
             try
             {
                 var productDetails = await _sellerRepository.GetProductAsync(request.ProductId);
-                if(request.BidDate > productDetails.BidEndDate)
-
+                if (request.BidDate > productDetails.BidEndDate)
+                {
+                    var response = new ValidateDateResponse { ProductId = request.ProductId, IsValid = false, Operation = request.Operation };
+                    await TopicMessagePublisher("SellerProducer", "isBidDateValid", JsonConvert.SerializeObject(response));
+                }
+                else
+                {
+                    var response = new ValidateDateResponse { ProductId = request.ProductId, IsValid = true, Operation = request.Operation };
+                    await TopicMessagePublisher("SellerProducer", "isBidDateValid", JsonConvert.SerializeObject(response));
+                }
             }
             catch (Exception)
             {

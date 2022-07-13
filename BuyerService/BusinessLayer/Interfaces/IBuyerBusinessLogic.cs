@@ -9,6 +9,7 @@ namespace BuyerService.BusinessLayer.Interfaces
     public interface IBuyerBusinessLogic
     {
         Task AddBid(BidAndBuyer bidDetails);
-        Task UpdateBid(string bidId, double amountToUpdate);
+        Task UpdateBid(string productId, string buyerEmailId, double updatedBidAmount);
+        
     }
 }

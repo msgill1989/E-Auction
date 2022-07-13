@@ -38,13 +38,13 @@ namespace BuyerService.RepositoryLayer
                 throw;
             }
         }
-        public async Task UpdateBid(string bidId, double amountToUpdate)
+        public async Task UpdateBid(string productId, string buyerEmailId, double bidAmount)
         {
             try
             {
-                var earlierBidDetails = await _bidCollections.Find(x => x.Id == bidId).FirstOrDefaultAsync();
-                earlierBidDetails.BidAmount = amountToUpdate;
-                await _bidCollections.ReplaceOneAsync(y => y.Id == bidId, earlierBidDetails);
+                var earlierBidDetails = await _bidCollections.Find(x => x.ProductId == productId && x.Email == buyerEmailId).FirstOrDefaultAsync();
+                earlierBidDetails.BidAmount = bidAmount;
+                await _bidCollections.ReplaceOneAsync(y => y.ProductId == productId && y.Email == buyerEmailId, earlierBidDetails);
             }
             catch (Exception)
             {
@@ -66,6 +66,33 @@ namespace BuyerService.RepositoryLayer
                     bidDetails = _bidCollections.Find(x => x.Email == bidderEmailId && x.ProductId == productId).FirstOrDefault();
                 }
                 return bidDetails;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public List<BidAndBuyer> GetAllBidsForProductId(string productId)
+        {
+            try
+            {
+                List<BidAndBuyer> allBids;
+                allBids = _bidCollections.Find(X => X.ProductId == productId).SortByDescending(Y => Y.BidAmount).ToList();
+                return allBids;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public BidAndBuyer GetBidDetailsByBidId(string bidId)
+        {
+            try
+            {
+                return _bidCollections.Find(x => x.Id == bidId).FirstOrDefault();
             }
             catch (Exception)
             {

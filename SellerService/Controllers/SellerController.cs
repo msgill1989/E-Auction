@@ -12,6 +12,7 @@ using SellerService.Enums;
 namespace SellerService.Controllers
 {
     [ApiController]
+    [Route("/e-auction/api/v1/[controller]")]
     public class SellerController : Controller
     {
         private readonly ISellerBusinessLogic _sellerBusinessLogic;
@@ -22,7 +23,7 @@ namespace SellerService.Controllers
             _logger = logger;
         }
 
-        [HttpPost("AddProduct")]
+        [HttpPost("add-product")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -43,11 +44,11 @@ namespace SellerService.Controllers
         }
 
         // DELETE product
-        [HttpDelete("DeleteProduct")]
+        [HttpDelete("delete/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<DeleteProductSuccessResponse>> DeleteProduct([FromQuery]string productId)
+        public async Task<ActionResult<DeleteProductSuccessResponse>> DeleteProduct(string productId)
         {
             try
             {
@@ -68,15 +69,15 @@ namespace SellerService.Controllers
             }
         }
 
-        [HttpGet("ShowBids")]
+        [HttpGet("show-bids/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ShowBidsResponse>> ShowBids([FromQuery] string productId)
+        public async Task<ActionResult<ShowBidsResponse>> ShowBids(string productId)
         {
             try
             {
-                var result = _sellerBusinessLogic.GetAllBidDetailsAsync(productId);
+                var result = await _sellerBusinessLogic.GetAllBidDetailsAsync(productId);
                 return result;
             }
             catch (Exception ex)

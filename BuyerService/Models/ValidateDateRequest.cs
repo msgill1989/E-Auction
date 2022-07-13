@@ -9,5 +9,6 @@ namespace BuyerService.Models
     {
         public string ProductId { get; set; }
         public DateTime BidDate { get; set; }
+        public string Operation { get; set; }
     }
 }

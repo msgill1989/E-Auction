@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace BuyerService.Controllers
 {
     [ApiController]
+    [Route("e-auction/api/v1/[controller]")]
     public class BuyerController : Controller
     {
         private readonly IBuyerBusinessLogic _buyerBusinessLogic;
@@ -22,7 +23,7 @@ namespace BuyerService.Controllers
             _logger = logger;
         }
         // POST: BuyerController/AddBid
-        [HttpPost("AddBid")]
+        [HttpPost("place-bid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,15 +48,15 @@ namespace BuyerService.Controllers
             }
         }
 
-        [HttpPatch("UpdateBidAmount")]
+        [HttpPatch("update-bid/{productId}/{buyerEmailId}/{newBidAmount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<UpdateBidAmountSuccessResponse>> EditBid(string bidId, double updatedBidAmount)
+        public async Task<ActionResult<UpdateBidAmountSuccessResponse>> EditBid(string productId, string buyerEmailId, double newBidAmount)
         {
             try
             {
-                await _buyerBusinessLogic.UpdateBid(bidId, updatedBidAmount);
+                await _buyerBusinessLogic.UpdateBid(productId, buyerEmailId, Convert.ToDouble(newBidAmount));
                 return new UpdateBidAmountSuccessResponse { Message = "Amount has been successfully updated"};
             }
             catch (Exception ex)

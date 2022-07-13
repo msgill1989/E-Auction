@@ -17,25 +17,42 @@ namespace BuyerService.BusinessLayer
         private readonly ILogger<BuyerBusinessLogic> _logger;
         private readonly ConsumerConfig _consumerConfig;
         private readonly ProducerConfig _producerConfig;
+        private readonly static Dictionary<string, bool> validDateResponseQueueForADD = new Dictionary<string, bool>() ;
+        private readonly static Dictionary<string, bool> validDateResponseQueueForUPDATE = new Dictionary<string, bool>();
+        private bool isListenerRunning;
         public BuyerBusinessLogic(IBuyerRepository buyerRepository, ILogger<BuyerBusinessLogic> logger, ConsumerConfig consumerConfig, ProducerConfig producerConfig)
         {
             _buyerRepository = buyerRepository;
             _logger = logger;
             _consumerConfig = consumerConfig;
             _producerConfig = producerConfig;
+            if (isListenerRunning != true)
+                Task.Run(() => TopicMessageListener());
         }
 
         public async Task AddBid(BidAndBuyer bidDetails)
         {
             try
             {
-                ValidateDateRequest dateToValidate = new ValidateDateRequest() { ProductId = bidDetails.ProductId, BidDate = DateTime.Now};
+                ValidateDateRequest dateToValidate = new ValidateDateRequest() { ProductId = bidDetails.ProductId, Operation = "Add", BidDate = DateTime.Now};
                 //If bid is placed after the bid end date. throw a exception. -----------To be implemented--------------------
                 await TopicMessagePublisher("BuyerProducer", "isBidDateValid", JsonConvert.SerializeObject(dateToValidate));
 
+                while (true)
+                {
+                    if (validDateResponseQueueForADD.ContainsKey(bidDetails.ProductId))
+                    {
+                        if (validDateResponseQueueForADD.FirstOrDefault(x => x.Key == bidDetails.ProductId).Value == false)
+                        {
+                            throw new KeyNotFoundException("Bid cannot be placed after bid end date");
+                        }
+                        else
+                            break;
+                    }
+                }
+
                 //Check if the same user has already placed a bid
                 BidAndBuyer existingBid = await _buyerRepository.GetBidDetails(bidDetails.ProductId, bidDetails.Email);
-
                 if (existingBid != null)
                     throw new KeyNotFoundException("This buyer has already placed bid for this product.");
 
@@ -48,9 +65,23 @@ namespace BuyerService.BusinessLayer
             }
             
         }
-        public async Task UpdateBid(string bidId, double bidAmount)
+        public async Task UpdateBid(string productId, string buyerEmailId, double bidAmount)
         {
-            await _buyerRepository.UpdateBid(bidId, bidAmount);
+            await TopicMessagePublisher("BuyerProducer", "isBidDateValidForUpdate", productId);
+
+            while (true)
+            {
+                if (validDateResponseQueueForUPDATE.ContainsKey(productId))
+                {
+                    if (validDateResponseQueueForUPDATE.FirstOrDefault(x => x.Key == productId).Value == false)
+                    {
+                        throw new KeyNotFoundException("Bid cannot be updated after bid end date.");
+                    }
+                    else
+                        break;
+                }
+            }
+            await _buyerRepository.UpdateBid(productId, buyerEmailId, bidAmount);
         }
 
         public async Task TopicMessageListener()
@@ -59,6 +90,7 @@ namespace BuyerService.BusinessLayer
             {
                 using (var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build())
                 {
+                    isListenerRunning = true;
                     consumer.Subscribe("SellerProducer");
                     while (true)
                     { 
@@ -71,9 +103,23 @@ namespace BuyerService.BusinessLayer
                                     await IsBidPresentForProductId(msg.Message.Value);
                                     msg = null;
                                 break;
-                                case "bidDateResponse":
-
+                                case "isBidDateValid":
+                                    var message = JsonConvert.DeserializeObject<ValidateDateResponse>(msg.Message.Value);
+                                    if (message.Operation == "Add")
+                                    {
+                                        validDateResponseQueueForADD.Add(message.productId, message.IsValid);
+                                    }
+                                    if (message.Operation == "Update")
+                                    {
+                                        validDateResponseQueueForUPDATE.Add(message.productId, message.IsValid);
+                                    }
+                                    msg = null;
                                 break;
+                                case "GetAllBids":
+                                    var messag = msg.Message.Value;
+                                    await GetAllBidDetails(messag);
+                                    msg = null;
+                                    break;
                             }
                         }
                     }
@@ -115,6 +161,29 @@ namespace BuyerService.BusinessLayer
                     await producer.ProduceAsync(topic, new Message<string, string> { Key = key, Value = value });
                     producer.Flush(TimeSpan.FromSeconds(10));
                 }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private async Task GetAllBidDetails(string productId)
+        {
+            try
+            {
+                GetAllBidsResponse response = new GetAllBidsResponse();
+                response.ProductId = productId;
+                List<BidDetails> bidLst = new List<BidDetails>();
+                var bidDetails = _buyerRepository.GetAllBidsForProductId(productId);
+                foreach (var bid in bidDetails)
+                {
+                    bidLst.Add(new BidDetails { BidAmount = bid.BidAmount, BuyerFName = bid.BuyerFName, Email = bid.Email, Mobile = bid.Phone });
+                }
+                response.Bids.AddRange(bidLst);
+                var serializedBids = JsonConvert.SerializeObject(response);
+                await TopicMessagePublisher("ButerProducer", "bidList", serializedBids);
             }
             catch (Exception)
             {

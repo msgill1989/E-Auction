@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace SellerService.Models
 {
-    public class ValidateDateRequest
+    public class ValidateDateResponse
     {
         public string ProductId { get; set; }
-        public DateTime BidDate { get; set; }
+        public bool IsValid { get; set; }
         public string Operation { get; set; }
     }
 }

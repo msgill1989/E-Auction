@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SellerService.Models
+namespace BuyerService.Models
 {
-    public class ValidateDateRequest
+    public class ValidateDateResponse
     {
-        public string ProductId { get; set; }
-        public DateTime BidDate { get; set; }
+        public string productId { get; set; }
+        public bool IsValid { get; set; }
         public string Operation { get; set; }
     }
 }
