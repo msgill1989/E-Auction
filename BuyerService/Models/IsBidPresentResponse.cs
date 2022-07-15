@@ -7,7 +7,7 @@ namespace BuyerService.Models
 {
     public class IsBidPresentResponse
     {
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
         public bool IsBidPresent { get; set; }
     }
 }

@@ -27,7 +27,8 @@ namespace SellerService.Kafka
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            throw new NotImplementedException();
+            Task.Run(() => StartConsumer(stoppingToken));
+            return Task.CompletedTask;
         }
 
         private async Task StartConsumer(CancellationToken stoppingToken)

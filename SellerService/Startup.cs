@@ -18,6 +18,7 @@ using SellerService.RepositoryLayer;
 using Serilog;
 using SellerService.Models;
 using Confluent.Kafka;
+using SellerService.Kafka;
 
 namespace SellerService
 {
@@ -43,6 +44,7 @@ namespace SellerService
 
             services.AddTransient<ISellerBusinessLogic, SellerBusinessLogic>();
             services.AddTransient<ISellerRepository, SellerRepository>();
+            services.AddHostedService<KafkaConsumer>();
 
             //Adding MongoDB settings
             services.Configure<EAuctionDatabaseSettings>(Configuration.GetSection("EAuctionDatabase"));

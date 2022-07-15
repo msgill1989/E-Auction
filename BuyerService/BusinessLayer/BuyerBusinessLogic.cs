@@ -95,10 +95,10 @@ namespace BuyerService.BusinessLayer
                     response = false;
                 else
                     response =  true;
-                var serializedResponse = JsonConvert.SerializeObject(new IsBidPresentResponse() { ProductId = Convert.ToInt32(productId), IsBidPresent = response });
+                var serializedResponse = JsonConvert.SerializeObject(new IsBidPresentResponse() { ProductId = productId, IsBidPresent = response });
                 await TopicMessagePublisherAsync("BuyerProducer","isBidPresent", serializedResponse);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;
