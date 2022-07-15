@@ -18,6 +18,7 @@ using BuyerService.RepositoryLayer;
 using BuyerService.Models;
 using Serilog;
 using Confluent.Kafka;
+using BuyerService.Kafka;
 
 namespace BuyerService
 {
@@ -43,6 +44,7 @@ namespace BuyerService
 
             services.AddTransient<IBuyerBusinessLogic, BuyerBusinessLogic>();
             services.AddTransient<IBuyerRepository, BuyerRepository>();
+            services.AddHostedService<KafkaConsumer>();
 
             //MongoDB settings
             services.Configure<EAuctionDatabaseSettings>(Configuration.GetSection("EAuctionDatabase"));

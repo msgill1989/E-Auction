@@ -10,6 +10,8 @@ namespace BuyerService.BusinessLayer.Interfaces
     {
         Task AddBid(BidAndBuyer bidDetails);
         Task UpdateBid(string productId, string buyerEmailId, double updatedBidAmount);
-        
+        Task IsBidPresentForProductIdAsync(string productId);
+        void CollateResponseForQueue(string operation, string productId, bool isValid);
+        Task GetAllBidDetailsAsync(string productId);
     }
 }

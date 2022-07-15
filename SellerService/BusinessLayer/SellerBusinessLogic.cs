@@ -18,7 +18,7 @@ namespace SellerService.BusinessLayer
         private readonly ILogger<SellerBusinessLogic> _logger;
         private readonly ProducerConfig _producerconfig;
         private readonly ConsumerConfig _consumerConfig;
-        private readonly static Dictionary<int, bool> bidResponseFromBuyer = new Dictionary<int, bool>();
+        private readonly static Dictionary<string, bool> bidResponseFromBuyer = new Dictionary<string, bool>();
         private readonly static Dictionary<string, List<BidDetails>> bidDetailsResponseFromBuyer = new Dictionary<string, List<BidDetails>>();
 
         public SellerBusinessLogic(ISellerRepository sellerRepository, ILogger<SellerBusinessLogic> logger, ProducerConfig producerConfig, ConsumerConfig consumerConfig)
@@ -49,15 +49,18 @@ namespace SellerService.BusinessLayer
 
                 while (true)
                 {
-                    if (bidResponseFromBuyer.ContainsKey(Convert.ToInt16(productId)))
+                    if (bidResponseFromBuyer.ContainsKey(productId))
                     {
-                        if (bidResponseFromBuyer.FirstOrDefault(x => x.Key == Convert.ToInt16(productId)).Value == false)
+                        if (bidResponseFromBuyer.FirstOrDefault(x => x.Key == productId).Value == false)
                         {
-                            bidResponseFromBuyer.Remove(Convert.ToInt16(productId));
+                            bidResponseFromBuyer.Remove(productId);
                             throw new KeyNotFoundException("Product can not be deleted because there is already a bid placed for this product.");
                         }
                         else
+                        {
+                            bidResponseFromBuyer.Remove(productId);
                             break;
+                        }
                     }
                 }
 
@@ -124,48 +127,7 @@ namespace SellerService.BusinessLayer
             }
         }
 
-        public async Task TopicMessageListener()
-        {
-            try
-            {
-                using (var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build())
-                {
-                    consumer.Subscribe("BuyerProducer");
-                    while (true)
-                    {
-                        var msg = consumer.Consume();
-                        if (msg != null)
-                        {
-                            switch (msg.Message.Key)
-                            {
-                                case "isBidPresent":
-                                    await IsBidPresentForProductId(msg.Message.Value);
-                                    msg = null;
-                                    break;
-                                case "isBidDateValid":
-                                    var request = JsonConvert.DeserializeObject<ValidateDateRequest>(msg.Message.Value);
-                                    await IsBidDateValid(request);
-                                    msg = null;
-                                    break;
-                                case "bidList":
-                                    var bids = JsonConvert.DeserializeObject<GetAllBidDetailsResponse>(msg.Message.Value);
-                                    bidDetailsResponseFromBuyer.Add(bids.ProductId, bids.Bids);
-                                    msg = null;
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task IsBidPresentForProductId(string message)
+        public void IsBidPresentForProductId(string message)
         {
             try
             {
@@ -179,7 +141,7 @@ namespace SellerService.BusinessLayer
             }
         }
 
-        public async Task IsBidDateValid(ValidateDateRequest request)
+        public async Task IsBidDateValidAsync(ValidateDateRequest request)
         {
             try
             {
@@ -194,6 +156,18 @@ namespace SellerService.BusinessLayer
                     var response = new ValidateDateResponse { ProductId = request.ProductId, IsValid = true, Operation = request.Operation };
                     await TopicMessagePublisher("SellerProducer", "isBidDateValid", JsonConvert.SerializeObject(response));
                 }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public void CollateBidsResponse(string productId, List<BidDetails> bids)
+        {
+            try
+            {
+                bidDetailsResponseFromBuyer.Add(productId, bids);
             }
             catch (Exception)
             {
